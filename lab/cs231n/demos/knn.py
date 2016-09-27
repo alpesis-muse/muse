@@ -28,6 +28,44 @@ def sampling(data, quota):
     return data[mask]
 
 
+def predict_with_distances(X_train, Y_train, X_test, Y_test):
+
+    classifier = KNearestNeighbor()
+    classifier.train(X_train, Y_train)
+
+    Y_test_predictions = classifier.predict(X_test, k=1, distance_type='manhattan_two_loops')
+    classifier.eval_accuracy(Y_test, Y_test_predictions)
+
+    Y_test_predictions = classifier.predict(X_test, k=1, distance_type='manhattan_one_loop')
+    classifier.eval_accuracy(Y_test, Y_test_predictions)
+
+    Y_test_predictions = classifier.predict(X_test, k=1, distance_type='manhattan_no_loop')
+    classifier.eval_accuracy(Y_test, Y_test_predictions)
+
+    Y_test_predictions = classifier.predict(X_test, k=1, distance_type='euclidean_two_loops')
+    classifier.eval_accuracy(Y_test, Y_test_predictions)
+
+    Y_test_predictions = classifier.predict(X_test, k=1, distance_type='euclidean_one_loop')
+    classifier.eval_accuracy(Y_test, Y_test_predictions)
+
+    Y_test_predictions = classifier.predict(X_test, k=1, distance_type='euclidean_no_loop')
+    classifier.eval_accuracy(Y_test, Y_test_predictions)
+
+
+def compare_distances(X_train, Y_train, X_test):
+    classifier = KNearestNeighbor()
+    classifier.train(X_train, Y_train)
+
+    classifier.eval_distances(X_test)
+
+
+def compare_time(X_train, Y_train, X_test):
+    classifier = KNearestNeighbor()
+    classifier.train(X_train, Y_train)
+
+    classifier.eval_time(X_test)
+
+
 def main():
     """"""
 
@@ -53,12 +91,25 @@ def main():
     print X_train.shape, X_test.shape
 
     # train
-    classifier = KNearestNeighbor()
-    classifier.train(X_train, Y_train)
-    distances = classifier.compute_distances_two_loops(X_test)
-    print distances.shape
-    plt.imshow(distances, interpolation='none')
-    plt.show()
+    predict_with_distances(X_train, Y_train, X_test, Y_test)
+    compare_distances(X_train, Y_train, X_test)
+    compare_time(X_train, Y_train, X_test)
+
+    # distances = classifier.compute_distances_two_loops(X_test)
+    # print distances.shape
+    # plt.imshow(distances, interpolation='none')
+    # plt.show()
+
+    # predict
+    # Y_test_predictions = classifier.predict(distances, k=1)
+    # accuracy = classifier.evaluate(Y_test, Y_test_predictions)
+    # Y_test_predictions = classifier.predict(distances, k=5)
+    # accuracy = classifier.evaluate(Y_test, Y_test_predictions)
+
+    # distance_one_loop
+    # distances_one = classifier.compute_distances_one_loop(X_test)
+    # print distances_one.shape
+    # difference = classifier.evaluate_distances(distances, distances_one)
 
 
 if __name__ == '__main__':
