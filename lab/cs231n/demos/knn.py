@@ -66,6 +66,32 @@ def compare_time(X_train, Y_train, X_test):
     classifier.eval_time(X_test)
 
 
+def cross_validate(X_train, Y_train, folds, k_list):
+    classifier = KNearestNeighbor()
+    classifier.train(X_train, Y_train)
+
+    k_to_accuracies = classifier.cross_validate(folds, k_list)
+    for k in k_list:
+        accuracies = k_to_accuracies[k]
+        plt.scatter([k] * len(accuracies), accuracies)
+
+    accuracies_mean = np.array([np.mean(v) for k, v in sorted(k_to_accuracies.items())])
+    accuracies_std = np.array([np.std(v) for k, v in sorted(k_to_accuracies.items())])
+    plt.errorbar(k_list, accuracies_mean, yerr=accuracies_std)
+    plt.title("Cross-Validation on k")
+    plt.xlabel('k')
+    plt.ylabel('Cross-Validation accuracy')
+    plt.show()
+
+
+def k_classifier(X_train, Y_train, X_test, Y_test, k):
+    classifier = KNearestNeighbor()
+    classifier.train(X_train, Y_train)
+    Y_test_predictions = classifier.predict(X_test, k=k, distance_type='euclidean_no_loop')
+    accuracy = classifier.eval_accuracy(Y_test, Y_test_predictions)
+    return [accuracy, Y_test_predictions]
+
+
 def main():
     """"""
 
@@ -91,9 +117,18 @@ def main():
     print X_train.shape, X_test.shape
 
     # train
-    predict_with_distances(X_train, Y_train, X_test, Y_test)
-    compare_distances(X_train, Y_train, X_test)
-    compare_time(X_train, Y_train, X_test)
+    # predict_with_distances(X_train, Y_train, X_test, Y_test)
+    # compare_distances(X_train, Y_train, X_test)
+    # compare_time(X_train, Y_train, X_test)
+
+    # cross validation
+    # folds = 5
+    # k_list = [1, 3, 5, 8, 10, 12, 15, 20, 50, 100]
+    # cross_validate(X_train, Y_train, folds, k_list)
+    
+    # k_train
+    best_k = 8
+    k_classifier(X_train, Y_train, X_test, Y_test, best_k)
 
     # distances = classifier.compute_distances_two_loops(X_test)
     # print distances.shape
@@ -110,6 +145,7 @@ def main():
     # distances_one = classifier.compute_distances_one_loop(X_test)
     # print distances_one.shape
     # difference = classifier.evaluate_distances(distances, distances_one)
+
 
 
 if __name__ == '__main__':

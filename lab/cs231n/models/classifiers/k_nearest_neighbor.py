@@ -91,3 +91,39 @@ class KNearestNeighbor(object):
         distances.eval_time(distances.euclidean_two_loops)
         distances.eval_time(distances.euclidean_one_loop)
         distances.eval_time(distances.euclidean_no_loop)
+
+
+    def cross_validate(self, folds, k_list):
+        """
+        return k_to_accuracies:
+            ::
+                {
+                   <fold>: [accuracy1, accuracy2, accuracy3, ...]
+                }
+        """
+
+        X_train_folds = np.array_split(self.X_train, folds)
+        Y_train_folds = np.array_split(self.Y_train, folds)
+
+        k_to_accuracies = {}
+        for k in k_list:
+            k_to_accuracies[k] = []
+            for fold in range(folds):
+                this_X_train = np.vstack(X_train_folds[:fold]+X_train_folds[fold+1:])
+                this_X_test = X_train_folds[fold]
+                this_Y_train = np.hstack(Y_train_folds[:fold]+Y_train_folds[fold+1:])
+                this_Y_test = Y_train_folds[fold]
+
+                self.train(this_X_train, this_Y_train)
+                Y_test_predictions = self.predict(this_X_test, k=k, distance_type='euclidean_no_loop')
+                
+                num_of_corrections = np.sum(Y_test_predictions == this_Y_test)
+                accuracy = float(num_of_corrections) / len(this_Y_test)
+                k_to_accuracies[k].append(accuracy)
+
+        print "k_to_accuracies: \n ", k_to_accuracies
+        # for k in sorted(k_to_accuracies):
+        #    for accuracy in k_to_accuracies[k]:
+        #        print 'k = %d, accuracy = %f' % (k, accuracy)
+
+        return k_to_accuracies
