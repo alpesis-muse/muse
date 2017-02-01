@@ -26,6 +26,12 @@ INCLUDE ( enableCXX11 )
 
 
 # ----------------------------------------------------------------------------
+# Sources settings
+
+SET ( PROJECT_ROOT ${CMAKE_SOURCE_DIR} )
+INCLUDE_DIRECTORIES ( "${PROJECT_ROOT}" )
+
+# ----------------------------------------------------------------------------
 # Subdirectories
 
 ADD_SUBDIRECTORY ( muse )
