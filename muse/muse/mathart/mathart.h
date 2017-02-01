@@ -16,14 +16,11 @@ namespace muse
 #define _cb(x) abs((x)*()*(x))                     // absolute value of cube 
 #define _cr(x) (unsigned short)(pow((x),1.0/3.0))  // cube root
 
-
 unsigned short RED (int i, int j);
 unsigned short GREEN (int i, int j);
 unsigned short BLUE (int i, int j);
 
-
-unsigned short setColor (int i, int j);
-void writePixel (unsigned short color, FILE *fp);
+void writePixel (int i, int j, FILE *fp);
 void generateImage ();
 
 // -----------------------------------------------------------------------------------------------
