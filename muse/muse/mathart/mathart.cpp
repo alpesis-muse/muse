@@ -51,7 +51,7 @@ void writePixel (int i, int j, FILE *fp)
 void generateImage ()
 {
     FILE *fp;
-    fp = fopen ("MathematicalImage", "wb");
+    fp = fopen ("MathematicalImage.jpg", "wb");
     fprintf(fp, "P6\n%d %d\n1023\n", DIM, DIM);
 
     for (int j = 0; j < DIM; ++j)
